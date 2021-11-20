@@ -1,4 +1,5 @@
 ﻿using ImageShare.ImageShareData;
+using ImageShare.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -20,11 +21,29 @@ namespace ImageShare.Controllers
         }
 
         [HttpPut]
-        [Route("add")]
-        public IActionResult AddImages(Guid id, List<IFormFile> images)
+        [Route("add/{email}")]
+        public IActionResult AddImages(string email, List<IFormFile> images)
         {
-            image.uploadImages(id,images);
-            return Created(HttpContext.Request.Scheme + "//" + HttpContext.Request.Host + HttpContext.Request.Path + "/" , image);
+            image.uploadImages(email,images);
+            return Ok("Image successfully uploaded");
+
+        }
+
+        [HttpGet]
+        [Route("get/{email}")]
+        public IActionResult getImages(string email)
+        {
+            List<ImageUploaded> list = image.GetImages(email);
+            return Ok(list);
+
+        }
+
+        [HttpDelete]
+        [Route("delete/{email}/{name}")]
+        public IActionResult deleteImage(string email, string name)
+        {
+            int count = image.deleteImage(email, name);           
+            return Ok(count + " Image suucessfully deleted");
 
         }
     }

@@ -3,6 +3,7 @@ using ImageShare.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace ImageShare.PersonData
 {
@@ -17,7 +18,6 @@ namespace ImageShare.PersonData
         public void addPerson(Person person)
         {
             person.id = new Guid();
-            person.dob = DateTime.Now;
             personContext.People.Add(person);
             personContext.SaveChanges();
         }
@@ -28,9 +28,9 @@ namespace ImageShare.PersonData
             personContext.SaveChanges();
         }
 
-        public Person EditPerson(Person person)
+        public Person EditPerson(string email,Person person)
         {
-            var exisingPerson = personContext.People.Find(person.id);
+            var exisingPerson = getPerson(email);
             if (exisingPerson != null) {
                 personContext.People.Update(person);
                 personContext.SaveChanges();
@@ -43,10 +43,24 @@ namespace ImageShare.PersonData
             return personContext.People.ToList();
         }
 
-        public Person getPerson(Guid id)
+        public Person getPerson(string email)
         {
-            var person = personContext.People.FromSql();
-            return person;
+            Person returnPerson = new Person();
+            var person = personContext.People.FromSqlRaw($"select * from people where user_email='"+email+"';");
+            if (person.ToArray().Length != 0) {
+                returnPerson = (Person)person.ToArray().GetValue(0);
+            }
+            return returnPerson;
         }
+
+        public bool login(string email, string password) {
+            var person = personContext.People.FromSqlRaw($"select * from people where user_email='" + email + "' and user_password='"+password+"';");
+            if (person.ToArray().Length == 1)
+            {
+                return true;
+            }
+            return false;
+        }
+
     }
 }

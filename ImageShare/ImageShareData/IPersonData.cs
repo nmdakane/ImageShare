@@ -10,13 +10,15 @@ namespace ImageShare.PersonData
     {
         List<Person> GetPeople();
 
-        Person getPerson(Guid id);
+        Person getPerson(String email);
+
+        bool login(string email, string password);
 
         void addPerson(Person person);
 
         void DeletePerson(Person person);
 
-        Person EditPerson(Person person);
+        Person EditPerson(string email,Person person);
 
         
     }

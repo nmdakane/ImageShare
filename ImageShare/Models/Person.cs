@@ -9,6 +9,10 @@ namespace ImageShare.Models
 {
     public class Person
     {
+      
+
+      
+
         [Key]
         [Column("User_id")]
         public Guid id { get; set; }
@@ -30,8 +34,13 @@ namespace ImageShare.Models
         public String surname { get; set; }
 
         [Required]
-        [DataType(DataType.DateTime)]
-        [Column("User_DOB")]
-        public DateTime dob { get; set; }
+        [DataType(DataType.PhoneNumber)]
+        [Column("User_Contact")]
+        public string contact{ get; set; }
+
+        [Required]
+        [DataType(DataType.Password)]
+        [Column("User_Password")]
+        public string password { get; set; }
     }
 }

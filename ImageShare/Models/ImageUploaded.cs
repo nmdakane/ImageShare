@@ -19,15 +19,8 @@ namespace ImageShare.Models
 
         [Required]
         [Column("Image_name")]
-    
         public String imageName { set; get; }
 
-        [Required]
-        [Column("Image_width")]
-        public int width { get; set; }
-        [Required]
-        [Column("Image_height")]
-        public int height { get; set; }
 
         [Required]
         [Column("Image")]

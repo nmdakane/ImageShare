@@ -10,11 +10,11 @@ namespace ImageShare.ImageShareData
 {
     public interface Iimages
     {
-        public void uploadImages(Guid id,List<IFormFile> images);
-        List<ImageUploaded> GetImages();
+        public void uploadImages(string email,List<IFormFile> images);
+        List<ImageUploaded> GetImages(string email);
 
-        void deleteImage(ImageUploaded image);
+        int deleteImage(string email, string imagename);
 
-        void sendImage(ImageUploaded image);
+        void sendImage(string imagename, string emailtosend);
     }
 }

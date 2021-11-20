@@ -29,46 +29,59 @@ namespace ImageShare.Controllers
         }
 
         [HttpGet]
-        [Route("get/{id}")]
-        public IActionResult getUser(Guid id) {
-            var user = personData.getPerson(id);
+        [Route("get/{email}")]
+        public IActionResult getUser(String email) {
+            var user = personData.getPerson(email);
             if (user != null) {
-                return Ok(personData.getPerson(id));
+                return Ok(user);
             }
             return NotFound("Person not found");
         }
 
-        [HttpPut]
+        [HttpPost]
+        [Route("login")]
+        public IActionResult loginUser([FromBody] Login user)
+        {
+            string email = user.username;
+            string password = user.password;
+            if (personData.login(email,password))
+            {
+                return Ok(true);
+            }
+            return NotFound("Person not found");
+        }
+
+        [HttpPost]
         [Route("add")]
         public IActionResult AddUser(Person person)
         {
             personData.addPerson(person);
-            return Created(HttpContext.Request.Scheme + "//"+ HttpContext.Request.Host+ HttpContext.Request.Path+"/"+person.id,person);
+            return Ok("Successfully created"+person);
 
         }
 
         [HttpDelete]
-        [Route("delete/{person}")]
-        public IActionResult DeleteUser(Person per)
+        [Route("delete/{email}")]
+        public IActionResult DeleteUser(String email)
         {
-            var user = personData.getPerson(per.id);
+            var user = personData.getPerson(email);
             if (user != null) {
-
-                return Ok();
+                personData.DeletePerson(user);
+                return Ok("User Successfully removed");
             }
-            return NotFound("User with id "+ per.id+" is not found");
+            return NotFound("User with email "+ email +" is not found");
         }
 
         [HttpPatch]
-        [Route("update/{person}")]
-        public IActionResult updateUser(Guid id,Person per)
+        [Route("update/{email}")]
+        public IActionResult updateUser(string email,Person per)
         {
-            var newUser = personData.getPerson(id);
+            var newUser = personData.getPerson(email);
             if (newUser != null) {
                 per.id = newUser.id;
-                personData.EditPerson(per);
+                personData.EditPerson(email,per);
             }
-            return Ok(personData.getPerson(id));
+            return Ok(newUser);
         }
 
     }
