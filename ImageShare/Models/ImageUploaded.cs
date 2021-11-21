@@ -27,7 +27,19 @@ namespace ImageShare.Models
         public byte[] image { set; get; }
 
         [Required]
-        [Column("Date_uploaded")]
+        [Column("image_geolocation")]
+        public string geolocation { set; get; }
+
+        [Required]
+        [Column("image_tag")]
+        public string tag { set; get; }
+
+        [Required]
+        [Column("image_capturedBy")]
+        public string captured_by { set; get; }
+
+        [Required]
+        [Column("Date_captured")]
         public DateTime dateCreated { set; get; }
     }
 }

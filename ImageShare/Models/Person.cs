@@ -9,9 +9,6 @@ namespace ImageShare.Models
 {
     public class Person
     {
-      
-
-      
 
         [Key]
         [Column("User_id")]
