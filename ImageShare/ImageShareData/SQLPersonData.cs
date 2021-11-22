@@ -45,12 +45,9 @@ namespace ImageShare.PersonData
 
         public Person getPerson(string email)
         {
-            Person returnPerson = new Person();
-            var person = personContext.People.FromSqlRaw($"select * from people where user_email='"+email+"';");
-            if (person.ToArray().Length != 0) {
-                returnPerson = (Person)person.ToArray().GetValue(0);
-            }
-            return returnPerson;
+            Person person = personContext.People.Where(x=> x.email.Equals(email)).FirstOrDefault();
+            
+            return person;
         }
 
         public bool login(string email, string password) {

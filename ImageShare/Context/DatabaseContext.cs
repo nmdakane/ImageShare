@@ -15,6 +15,6 @@ namespace ImageShare.Context
 
         public DbSet<ImageUploaded> Images { get; set; }
 
-
+        public DbSet<Shared> Shared { get; set; }
     }
 }

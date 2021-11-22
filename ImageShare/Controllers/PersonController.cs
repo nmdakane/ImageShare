@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Session;
 
 namespace ImageShare.Controllers
 {
@@ -46,7 +47,12 @@ namespace ImageShare.Controllers
             string password = user.password;
             if (personData.login(email,password))
             {
-                return Ok(true);
+                HttpContext.Response.Cookies.Append("user", email);
+                HttpContext.Session.SetString("email", email);
+
+                Person per = personData.getPerson(email);
+                
+                return Ok(per);
             }
             return NotFound("Person not found");
         }

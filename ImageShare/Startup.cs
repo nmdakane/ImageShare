@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Serialization;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.AspNetCore.Http;
 
 namespace ImageShare
 {
@@ -31,20 +33,31 @@ namespace ImageShare
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-
+            services.AddSession();
             services.AddCors(e =>
             {
                 e.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
 
+            services.AddDistributedMemoryCache();
+            services.AddSession(options => {
+                options.IdleTimeout = TimeSpan.FromMinutes(25);
+            });
+            services.AddMvc();
+
             services.AddControllersWithViews()
                 .AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
                 .AddNewtonsoftJson(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
-            
 
-            services.AddDbContextPool<DatabaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ImageShareConnectionString")));
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddDbContextPool<DatabaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ImageShareConnectionString"),
+                options => options.CommandTimeout(180)
+               ));
 
+            services.AddSession(options => {
+                options.Cookie.IsEssential = true;
+            });
             services.AddScoped<IPersonData, SQLPersonData>();
             services.AddScoped<Iimages, ImagesImpl>();
         }
@@ -59,12 +72,12 @@ namespace ImageShare
 
             app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseHttpsRedirection();
-
+            app.UseSession();
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseSession();
 
-          
 
             app.UseEndpoints(endpoints =>
             {

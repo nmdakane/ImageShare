@@ -26,7 +26,7 @@ namespace ImageShare.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("Image_id");
 
-                    b.Property<Guid>("Person")
+                    b.Property<Guid?>("Person")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("captured_by")
@@ -104,13 +104,56 @@ namespace ImageShare.Migrations
                     b.ToTable("People");
                 });
 
+            modelBuilder.Entity("ImageShare.Models.Shared", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<string>("email")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("share_with");
+
+                    b.Property<Guid>("image_id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("user_id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("image_id");
+
+                    b.HasIndex("user_id");
+
+                    b.ToTable("Shared");
+                });
+
             modelBuilder.Entity("ImageShare.Models.ImageUploaded", b =>
                 {
                     b.HasOne("ImageShare.Models.Person", "person")
                         .WithMany()
-                        .HasForeignKey("Person")
+                        .HasForeignKey("Person");
+
+                    b.Navigation("person");
+                });
+
+            modelBuilder.Entity("ImageShare.Models.Shared", b =>
+                {
+                    b.HasOne("ImageShare.Models.ImageUploaded", "image")
+                        .WithMany()
+                        .HasForeignKey("image_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("ImageShare.Models.Person", "person")
+                        .WithMany()
+                        .HasForeignKey("user_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("image");
 
                     b.Navigation("person");
                 });

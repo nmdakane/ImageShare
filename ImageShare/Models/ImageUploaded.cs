@@ -13,7 +13,7 @@ namespace ImageShare.Models
         [Column("Image_id")]
         public Guid id {get; set;}
 
-        [Required]
+       
         [ForeignKey("Person")]
         public Person person { get; set; }
 
